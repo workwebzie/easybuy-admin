@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/order_model.dart';
 import '../services/firebase_service.dart';
-import '../config/initial_seed_data.dart';
 
 class OrderController extends GetxController {
   final FirebaseService _firebaseService = Get.find<FirebaseService>();
@@ -26,25 +25,22 @@ class OrderController extends GetxController {
 
   void _loadOrders() {
     isLoading.value = true;
-    orders.assignAll(InitialSeedData.defaultOrders);
+    orders.clear();
 
     _orderSubscription?.cancel();
     _orderSubscription = _firebaseService.streamOrders().listen((firestoreOrders) {
-      if (firestoreOrders.isNotEmpty) {
-        // Detect new order arrival
-        if (orders.isNotEmpty && firestoreOrders.length > orders.length) {
-          final newest = firestoreOrders.first;
-          _triggerNewOrderAlert(newest);
-        }
-        orders.assignAll(firestoreOrders);
+      if (orders.isNotEmpty && firestoreOrders.length > orders.length) {
+        final newest = firestoreOrders.first;
+        _triggerNewOrderAlert(newest);
       }
+      orders.assignAll(firestoreOrders);
       isLoading.value = false;
     }, onError: (err) {
       debugPrint('Firestore order stream notice: $err');
       isLoading.value = false;
     });
 
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(milliseconds: 600), () {
       isLoading.value = false;
     });
   }
@@ -89,8 +85,8 @@ class OrderController extends GetxController {
       }
       await _firebaseService.updateOrderStatus(orderId, newStatus);
       Get.snackbar(
-        'Order Status Updated 📦',
-        'Order status changed to "$newStatus"',
+        'Order Status Updated in Firebase 📦',
+        'Order status updated in Firestore to "$newStatus"',
         backgroundColor: const Color(0xFF1A1A1A),
         colorText: Colors.white,
         icon: const Icon(Icons.local_shipping, color: Color(0xFFFEEE00)),
@@ -102,7 +98,7 @@ class OrderController extends GetxController {
     }
   }
 
-  // Simulate an incoming order from a customer app
+  // Simulate an incoming order from a customer app and write to Firestore
   Future<void> simulateCustomerOrder() async {
     final simulatedId = 'ord_${DateTime.now().millisecondsSinceEpoch}';
     final simulatedOrder = OrderModel(
@@ -114,15 +110,15 @@ class OrderController extends GetxController {
       customerPhone: '+971 50 998 1122',
       items: [
         OrderItemModel(
-          productId: 'prod_1',
-          productName: 'Apple iPhone 16 Pro Max 256GB Natural Titanium',
-          productImage: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&q=80',
-          price: 4699.00,
+          productId: 'prod_simulated',
+          productName: 'Customer Order Item',
+          productImage: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
+          price: 299.00,
           quantity: 1,
         ),
       ],
-      totalAmount: 4699.00,
-      subtotal: 4699.00,
+      totalAmount: 299.00,
+      subtotal: 299.00,
       shippingFee: 0.0,
       status: 'Pending',
       paymentMethod: 'Apple Pay',

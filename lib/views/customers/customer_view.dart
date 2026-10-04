@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/customer_controller.dart';
+import '../../models/user_model.dart';
+import '../../config/app_theme.dart';
 import 'package:intl/intl.dart';
 
 class CustomerView extends StatelessWidget {
@@ -16,20 +18,39 @@ class CustomerView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Registered Customers',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0F172A),
-                ),
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Registered Customers',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  Text(
+                    'Manage registered Noon app users, view total lifetime spend, and toggle account access',
+                    style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+                  ),
+                ],
               ),
-              Text(
-                'Manage registered Noon app users, view total lifetime spend, and toggle account access',
-                style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+              ElevatedButton.icon(
+                onPressed: () => _showAddCustomerDialog(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryYellow,
+                  foregroundColor: const Color(0xFF1A1A1A),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                icon: const Icon(Icons.person_add_alt_1, size: 20),
+                label: const Text(
+                  'Add New Customer',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
               ),
             ],
           ),
@@ -62,6 +83,41 @@ class CustomerView extends StatelessWidget {
                 return const Padding(
                   padding: EdgeInsets.all(40),
                   child: Center(child: CircularProgressIndicator(color: Color(0xFF1A1A1A))),
+                );
+              }
+
+              if (list.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.all(40),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.people_outline, size: 54, color: Color(0xFF94A3B8)),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'No Registered Customers Yet',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0F172A)),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Customers will automatically sync when users register in the mobile app or place orders.',
+                          style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton.icon(
+                          onPressed: () => _showAddCustomerDialog(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryYellow,
+                            foregroundColor: const Color(0xFF1A1A1A),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                          ),
+                          icon: const Icon(Icons.person_add, size: 18),
+                          label: const Text('Add First Customer Account 👤', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               }
 
@@ -155,6 +211,59 @@ class CustomerView extends StatelessWidget {
                 ),
               );
             }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddCustomerDialog(BuildContext context) {
+    final nameCtrl = TextEditingController();
+    final emailCtrl = TextEditingController();
+    final phoneCtrl = TextEditingController(text: '+971 50 ');
+    final CustomerController custCtrl = Get.find<CustomerController>();
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Add Customer Account'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameCtrl,
+              decoration: const InputDecoration(labelText: 'Customer Full Name', hintText: 'Mohammed Al-Hashmi'),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: emailCtrl,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(labelText: 'Email Address', hintText: 'm.alhashmi@gmail.com'),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: phoneCtrl,
+              keyboardType: TextInputType.phone,
+              decoration: const InputDecoration(labelText: 'Phone Number', hintText: '+971 50 123 4567'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryYellow, foregroundColor: const Color(0xFF1A1A1A)),
+            onPressed: () {
+              if (nameCtrl.text.isNotEmpty && emailCtrl.text.isNotEmpty) {
+                final user = UserModel(
+                  id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
+                  name: nameCtrl.text.trim(),
+                  email: emailCtrl.text.trim(),
+                  phone: phoneCtrl.text.trim(),
+                  joinDate: DateTime.now(),
+                );
+                custCtrl.addCustomer(user);
+              }
+            },
+            child: const Text('Register Customer Account'),
           ),
         ],
       ),

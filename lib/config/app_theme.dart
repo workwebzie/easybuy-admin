@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Noon Signature Palette
-  static const Color primaryYellow = Color(0xFFFEEE00);
+  static const Color primaryYellow = Color.fromARGB(255, 36, 170, 137);
   static const Color primaryBlack = Color(0xFF1A1A1A);
   static const Color darkSlate = Color(0xFF0F172A);
   static const Color sidebarBg = Color(0xFF1E293B);

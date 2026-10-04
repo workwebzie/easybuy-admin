@@ -10,9 +10,9 @@ import 'products/product_list_view.dart';
 import 'orders/order_list_view.dart';
 import 'categories/category_view.dart';
 import 'banners/banner_view.dart';
+import 'mega_deals/mega_deal_view.dart';
 import 'customers/customer_view.dart';
 import 'coupons/coupon_view.dart';
-import 'settings/settings_view.dart';
 import 'orders/order_detail_dialog.dart';
 
 class MainLayout extends StatelessWidget {
@@ -50,7 +50,7 @@ class MainLayout extends StatelessWidget {
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
-                          'noon',
+                          'EasyBuy',
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
@@ -123,6 +123,14 @@ class MainLayout extends StatelessWidget {
                           onTap: () => navCtrl.changeTab(AdminTab.banners),
                         ),
                         _buildNavItem(
+                          icon: Icons.flash_on_outlined,
+                          activeIcon: Icons.flash_on,
+                          label: 'Mega Deals ⚡️',
+                          tab: AdminTab.megaDeals,
+                          currentTab: navCtrl.activeTab.value,
+                          onTap: () => navCtrl.changeTab(AdminTab.megaDeals),
+                        ),
+                        _buildNavItem(
                           icon: Icons.people_outline,
                           activeIcon: Icons.people,
                           label: 'Customers',
@@ -137,14 +145,6 @@ class MainLayout extends StatelessWidget {
                           tab: AdminTab.coupons,
                           currentTab: navCtrl.activeTab.value,
                           onTap: () => navCtrl.changeTab(AdminTab.coupons),
-                        ),
-                        _buildNavItem(
-                          icon: Icons.settings_outlined,
-                          activeIcon: Icons.settings,
-                          label: 'Settings & DB',
-                          tab: AdminTab.settings,
-                          currentTab: navCtrl.activeTab.value,
-                          onTap: () => navCtrl.changeTab(AdminTab.settings),
                         ),
                       ],
                     );
@@ -177,7 +177,7 @@ class MainLayout extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                isInit ? 'Firestore Connected' : 'Demo Mode Active',
+                                isInit ? 'Firestore Live ⚡️' : 'Demo Mode Active',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 11,
@@ -306,7 +306,6 @@ class MainLayout extends StatelessWidget {
                             return PopupMenuButton<String>(
                               onSelected: (val) {
                                 if (val == 'logout') authCtrl.logout();
-                                if (val == 'settings') navCtrl.changeTab(AdminTab.settings);
                               },
                               child: Row(
                                 children: [
@@ -337,7 +336,6 @@ class MainLayout extends StatelessWidget {
                                 ],
                               ),
                               itemBuilder: (ctx) => [
-                                const PopupMenuItem(value: 'settings', child: Text('Firebase & DB Settings')),
                                 const PopupMenuItem(value: 'logout', child: Text('Sign Out')),
                               ],
                             );
@@ -362,12 +360,12 @@ class MainLayout extends StatelessWidget {
                         return const CategoryView();
                       case AdminTab.banners:
                         return const BannerView();
+                      case AdminTab.megaDeals:
+                        return const MegaDealView();
                       case AdminTab.customers:
                         return const CustomerView();
                       case AdminTab.coupons:
                         return const CouponView();
-                      case AdminTab.settings:
-                        return const SettingsView();
                     }
                   }),
                 ),
@@ -460,12 +458,12 @@ class MainLayout extends StatelessWidget {
         return 'Categories & Departments 🏷️';
       case AdminTab.banners:
         return 'Promotional Banners 🖼️';
+      case AdminTab.megaDeals:
+        return 'Noon Mega Deals ⚡️';
       case AdminTab.customers:
         return 'Customer Accounts 👥';
       case AdminTab.coupons:
         return 'Coupons & Promo Codes 🎟️';
-      case AdminTab.settings:
-        return 'Settings & Firebase Sync ⚙️';
     }
   }
 }

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class AuthController extends GetxController {
   final RxBool isLoggedIn = true.obs; // Pre-authenticated for quick demo, toggleable
   final RxString adminEmail = 'admin@noon.com'.obs;
-  final RxString adminName = 'Noon Admin Team'.obs;
+  final RxString adminName = 'EasyBuy Admin Team'.obs;
   final RxString adminRole = 'Super Admin'.obs;
 
   final emailController = TextEditingController(text: 'admin@noon.com');
@@ -36,7 +36,7 @@ class AuthController extends GetxController {
     isLoggedIn.value = false;
     Get.snackbar(
       'Logged Out',
-      'You have been logged out of Noon Admin Portal',
+      'You have been logged out of EasyBuy Admin Portal',
       backgroundColor: Colors.black87,
       colorText: Colors.white,
     );

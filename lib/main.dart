@@ -10,6 +10,7 @@ import 'controllers/category_controller.dart';
 import 'controllers/customer_controller.dart';
 import 'controllers/banner_controller.dart';
 import 'controllers/coupon_controller.dart';
+import 'controllers/mega_deal_controller.dart';
 import 'views/main_layout.dart';
 import 'views/auth/login_view.dart';
 
@@ -30,6 +31,7 @@ void main() async {
   Get.put<CustomerController>(CustomerController(), permanent: true);
   Get.put<BannerController>(BannerController(), permanent: true);
   Get.put<CouponController>(CouponController(), permanent: true);
+  Get.put<MegaDealController>(MegaDealController(), permanent: true);
 
   runApp(const NoonAdminApp());
 }
@@ -42,7 +44,7 @@ class NoonAdminApp extends StatelessWidget {
     final AuthController authCtrl = Get.find<AuthController>();
 
     return GetMaterialApp(
-      title: 'Noon Admin Dashboard - Full Control Center',
+      title: 'Easybuy Admin Dashboard - Full Control Center',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home: Obx(() {

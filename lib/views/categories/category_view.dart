@@ -56,6 +56,42 @@ class CategoryView extends StatelessWidget {
 
           Obx(() {
             final list = catCtrl.categories;
+            if (list.isEmpty) {
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(40),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.category_outlined, size: 54, color: Color(0xFF94A3B8)),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'No Categories in Firebase Database Yet',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0F172A)),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Click below to add your first category. It will save directly to Firestore.',
+                          style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton.icon(
+                          onPressed: () => _showAddCategoryDialog(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryYellow,
+                            foregroundColor: const Color(0xFF1A1A1A),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                          ),
+                          icon: const Icon(Icons.add, size: 18),
+                          label: const Text('Add First Category 🏷️', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
             return GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

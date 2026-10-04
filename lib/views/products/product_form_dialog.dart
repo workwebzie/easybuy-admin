@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../models/product_model.dart';
 import '../../controllers/product_controller.dart';
+import '../../controllers/category_controller.dart';
 import '../../services/storage_service.dart';
 import '../../config/app_theme.dart';
 
@@ -31,16 +32,6 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
   bool _isActive = true;
   bool _isUploadingImage = false;
 
-  final List<String> _categories = [
-    'Electronics',
-    'Fashion',
-    'Home',
-    'Beauty',
-    'Supermarket',
-    'Toys & Games',
-    'Baby & Kids',
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -56,7 +47,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
           ? p.images.first
           : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
     );
-    if (p != null && _categories.contains(p.category)) {
+    if (p != null && p.category.isNotEmpty) {
       _selectedCategory = p.category;
     }
     _isExpress = p?.isExpress ?? true;
@@ -112,6 +103,17 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.product != null;
+    final CategoryController catCtrl = Get.find<CategoryController>();
+
+    final List<String> defaultCats = [
+      'Electronics',
+      'Fashion',
+      'Home',
+      'Beauty',
+      'Supermarket',
+      'Toys & Games',
+      'Baby & Kids',
+    ];
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -172,12 +174,28 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                         children: [
                           const Text('Category', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                           const SizedBox(height: 6),
-                          DropdownButtonFormField<String>(
-                            value: _selectedCategory,
-                            decoration: const InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12)),
-                            items: _categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
-                            onChanged: (val) => setState(() => _selectedCategory = val!),
-                          ),
+                          Obx(() {
+                            final dynamicCategories = catCtrl.categories.map((c) => c.name).toList();
+                            final allCats = <String>{
+                              ...defaultCats,
+                              ...dynamicCategories,
+                            }.toList();
+
+                            if (!allCats.contains(_selectedCategory)) {
+                              _selectedCategory = allCats.first;
+                            }
+
+                            return DropdownButtonFormField<String>(
+                              initialValue: _selectedCategory,
+                              decoration: const InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12)),
+                              items: allCats.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                              onChanged: (val) {
+                                if (val != null) {
+                                  setState(() => _selectedCategory = val);
+                                }
+                              },
+                            );
+                          }),
                         ],
                       ),
                     ),
@@ -308,7 +326,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                         children: [
                           Switch(
                             value: _isExpress,
-                            activeColor: const Color(0xFF1A1A1A),
+                            activeThumbColor: const Color(0xFF1A1A1A),
                             activeTrackColor: AppTheme.primaryYellow,
                             onChanged: (val) => setState(() => _isExpress = val),
                           ),

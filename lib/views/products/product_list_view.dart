@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/product_controller.dart';
+import '../../controllers/category_controller.dart';
 import '../../config/app_theme.dart';
 import 'product_form_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -11,8 +12,9 @@ class ProductListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ProductController prodCtrl = Get.find<ProductController>();
+    final CategoryController catCtrl = Get.find<CategoryController>();
 
-    final List<String> categories = [
+    final List<String> defaultCats = [
       'All',
       'Electronics',
       'Fashion',
@@ -92,6 +94,15 @@ class ProductListView extends StatelessWidget {
 
                   // Category Dropdown Filter
                   Obx(() {
+                    final categories = <String>{
+                      ...defaultCats,
+                      ...catCtrl.categories.map((c) => c.name),
+                    }.toList();
+
+                    if (!categories.contains(prodCtrl.selectedCategory.value)) {
+                      prodCtrl.selectedCategory.value = 'All';
+                    }
+
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
@@ -307,7 +318,7 @@ class ProductListView extends StatelessWidget {
                               message: product.isExpress ? 'Noon Express Active' : 'Standard Delivery',
                               child: Switch(
                                 value: product.isExpress,
-                                activeColor: const Color(0xFF1A1A1A),
+                                activeThumbColor: const Color(0xFF1A1A1A),
                                 activeTrackColor: AppTheme.primaryYellow,
                                 onChanged: (_) => prodCtrl.toggleExpress(product),
                               ),

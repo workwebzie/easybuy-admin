@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/product_model.dart';
 import '../services/firebase_service.dart';
-import '../config/initial_seed_data.dart';
 
 class ProductController extends GetxController {
   final FirebaseService _firebaseService = Get.find<FirebaseService>();
@@ -27,21 +26,18 @@ class ProductController extends GetxController {
 
   void _loadProducts() {
     isLoading.value = true;
-    products.assignAll(InitialSeedData.defaultProducts);
+    products.clear();
 
     _productSubscription?.cancel();
     _productSubscription = _firebaseService.streamProducts().listen((firestoreProducts) {
-      if (firestoreProducts.isNotEmpty) {
-        products.assignAll(firestoreProducts);
-      }
+      products.assignAll(firestoreProducts);
       isLoading.value = false;
     }, onError: (err) {
       debugPrint('Firestore product stream notice: $err');
       isLoading.value = false;
     });
 
-    // Fallback timer stop loading if empty
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(milliseconds: 600), () {
       isLoading.value = false;
     });
   }
@@ -62,12 +58,14 @@ class ProductController extends GetxController {
 
   Future<void> addProduct(ProductModel newProduct) async {
     try {
-      products.insert(0, newProduct);
+      if (!products.any((p) => p.id == newProduct.id)) {
+        products.insert(0, newProduct);
+      }
       await _firebaseService.addProduct(newProduct);
       Get.back(); // Close modal
       Get.snackbar(
-        'Product Created ⚡️',
-        '${newProduct.name} added to Noon Catalog',
+        'Product Saved to Firebase ⚡️',
+        '${newProduct.name} saved in Firestore collection "products"',
         backgroundColor: const Color(0xFF10B981),
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -88,8 +86,8 @@ class ProductController extends GetxController {
       await _firebaseService.updateProduct(updatedProduct);
       Get.back();
       Get.snackbar(
-        'Product Updated ✨',
-        'Changes saved successfully',
+        'Product Updated in Firebase ✨',
+        'Changes saved in Firestore',
         backgroundColor: const Color(0xFF3B82F6),
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -106,7 +104,7 @@ class ProductController extends GetxController {
       await _firebaseService.deleteProduct(productId);
       Get.snackbar(
         'Product Deleted',
-        'Item removed from store catalog',
+        'Item deleted from Firestore collection "products"',
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

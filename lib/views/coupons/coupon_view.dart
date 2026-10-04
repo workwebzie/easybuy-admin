@@ -58,6 +58,42 @@ class CouponView extends StatelessWidget {
 
           Obx(() {
             final list = coupCtrl.coupons;
+            if (list.isEmpty) {
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(40),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.confirmation_number_outlined, size: 54, color: Color(0xFF94A3B8)),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'No Promo Coupons in Firebase Yet',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0F172A)),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Create your first promo code. It will save directly to Firestore collection "coupons".',
+                          style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton.icon(
+                          onPressed: () => _showAddCouponDialog(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryYellow,
+                            foregroundColor: const Color(0xFF1A1A1A),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                          ),
+                          icon: const Icon(Icons.add, size: 18),
+                          label: const Text('Create First Promo Code 🎟️', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
             return GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

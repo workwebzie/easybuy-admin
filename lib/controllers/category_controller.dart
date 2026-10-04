@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/category_model.dart';
 import '../services/firebase_service.dart';
-import '../config/initial_seed_data.dart';
 
 class CategoryController extends GetxController {
   final FirebaseService _firebaseService = Get.find<FirebaseService>();
@@ -18,25 +17,25 @@ class CategoryController extends GetxController {
 
   void _loadCategories() {
     isLoading.value = true;
-    categories.assignAll(InitialSeedData.defaultCategories);
+    categories.clear();
 
     _firebaseService.streamCategories().listen((firestoreCats) {
-      if (firestoreCats.isNotEmpty) {
-        categories.assignAll(firestoreCats);
-      }
+      categories.assignAll(firestoreCats);
       isLoading.value = false;
     }, onError: (_) => isLoading.value = false);
 
-    Future.delayed(const Duration(seconds: 1), () => isLoading.value = false);
+    Future.delayed(const Duration(milliseconds: 600), () => isLoading.value = false);
   }
 
   Future<void> addCategory(CategoryModel category) async {
-    categories.add(category);
+    if (!categories.any((c) => c.id == category.id)) {
+      categories.add(category);
+    }
     await _firebaseService.addCategory(category);
     Get.back();
     Get.snackbar(
-      'Category Added 🏷️',
-      '${category.name} added to catalog',
+      'Category Saved to Firebase 🏷️',
+      '${category.name} created in Firestore',
       backgroundColor: const Color(0xFF10B981),
       colorText: Colors.white,
       margin: const EdgeInsets.all(16),
@@ -48,7 +47,7 @@ class CategoryController extends GetxController {
     await _firebaseService.deleteCategory(id);
     Get.snackbar(
       'Category Removed',
-      'Category removed from catalog',
+      'Category deleted from Firestore',
       backgroundColor: Colors.redAccent,
       colorText: Colors.white,
       margin: const EdgeInsets.all(16),

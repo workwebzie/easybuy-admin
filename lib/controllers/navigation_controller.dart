@@ -6,9 +6,9 @@ enum AdminTab {
   orders,
   categories,
   banners,
+  megaDeals,
   customers,
   coupons,
-  settings,
 }
 
 class NavigationController extends GetxController {
