@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1002166006899",
+    "project_id": "easybuy-1183a",
+    "storage_bucket": "easybuy-1183a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1002166006899:android:95f4ae8c58416341666606",
+        "android_client_info": {
+          "package_name": "com.noon.admin.noon_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFy3KJ5HyzCXvrOM8aDzFwJhSEFz69GgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
